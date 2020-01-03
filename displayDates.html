@@ -1,0 +1,63 @@
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script><body>
+    <h1><font face="sans-serif">Holiday Dates</font></h1>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <div id="entries" >   
+    <ol class="list-group">
+    </ol>
+    </div>
+    <script type="text/javascript">
+    let API_URL='https://xfhkvva1xh.execute-api.us-east-1.amazonaws.com/prod/entries';
+    let API_URL1='https://xfhkvva1xh.execute-api.us-east-1.amazonaws.com/prod/delete';
+      var listOfEntries = []
+    function del(el1) {
+        $.ajax({
+          type:'DELETE',
+          url:API_URL,
+          data: JSON.stringify({"dateStart": el1}),
+          contentType: "application/json",
+          success: function(data){
+            alert("Successfully deleted entry");
+          }
+        });
+      return false;
+    }
+   function compare(a, b) {
+     if (a[0] < b[0]) return -1;
+     if (a[0] > b[0]) return 1;
+     return 0;
+   }
+   function printEntries(list) {
+     listOfEntries.sort(compare);
+     var i;
+     for (i = 0; i < list.length; i++) {
+       $('#entries').append('<li class="list-group-item"><font face="sans-serif"><i>'+ list[i][4] + '</i><br />' + 
+                                     new Date(list[i][0]).toDateString() + ", " + list[i][1] + " - " + new Date(list[i][2]).toDateString() + ", " + list[i][3] + '&nbsp;&nbsp;&nbsp;&nbsp;' +
+                                      " " + '<input id="deleteButton" type="button" value="Delete" OnClick="del(\'' + list[i][0] + '\');" />' +  '</font></li>');
+     }
+   }
+    $(document).ready(function(){
+        $.ajax({
+            type:'GET',
+            url:API_URL,    
+            success: function(data){
+                $('#entries').html('');      
+                data.Items.forEach(function(dbEntry){  
+                var startDate = new Date(dbEntry.dateStart).getTime();
+                  var startTime = new Date(dbEntry.dateStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                  var endDate = new Date(dbEntry.dateEnd).getTime();
+                  var endTime = new Date(dbEntry.dateEnd).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                  var name = dbEntry.name;
+                  var entry = [startDate, startTime, endDate, endTime, name];
+                  listOfEntries.push(entry);               
+                })
+                printEntries(listOfEntries);
+            }
+        })
+    });
+      
+      
+  </script>
+</body>

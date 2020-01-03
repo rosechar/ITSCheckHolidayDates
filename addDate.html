@@ -1,0 +1,48 @@
+<meta charset="utf-8">  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<h1><font face="sans-serif"> Add a new holiday date</font></h1>  <form>
+        <font face="sans-serif">
+<label for="dateStart">Start Date:</label>
+        <input type="datetime-local" id="dateStart">
+          
+</br>
+        <label for="dateEnd">End Date:</label>
+        <input type="datetime-local" id="dateEnd">
+</br>
+        <label for="name">Holiday:</label>
+        <select name="name" id ="name">
+          <option value="" disabled selected></option>
+          <option value="Labor Day">Labor Day</option>
+          <option value="Thanksgiving">Thanksgiving</option>
+          <option value="Season Days">Season Days</option>
+          <option value="Memorial Day">Memorial Day</option>
+          <option value="4th of July">4th of July</option>
+          <option value="Unexpected Closure">Unexpected Closure</option>
+        </select>
+        <button id="submitButton">Submit</button>
+        <input type="reset">
+</font>    
+</form>
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      
+        let API_URL='https://xfhkvva1xh.execute-api.us-east-1.amazonaws.com/prod/entries';
+$('#submitButton').on('click', function(){
+            $.ajax({
+            type:'POST',
+            url:API_URL,
+            data: JSON.stringify({"dateStart": new Date($('#dateStart').val()).getTime(), "dateEnd": new Date($('#dateEnd').val()).getTime(),"name": $('#name').val()}),
+            contentType: "application/json",
+            success: function(data){
+                      alert('Date has been successfuly added to database. Refresh page to see changes.')
+                     window.location.reload();
+            }
+        });
+            return false;  
+        });
+    
+    </script>  
+</body>
+</html>
